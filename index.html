@@ -1,0 +1,3080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleSwift — Digital Studio for Accra Designers</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET & BASE ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #0d0d0f;
+    --bg2:      #141417;
+    --bg3:      #1c1c21;
+    --navy:     #12122a;
+    --navy2:    #1a1a3e;
+    --border:   #2a2a32;
+    --gold:     #f0b429;
+    --gold2:    #c9820a;
+    --white:    #ffffff;
+    --muted:    #636b8a;
+    --muted2:   #9999bb;
+    --green:    #25D366;
+    --error:    #f87171;
+    --radius:   14px;
+    --font-d:   'Syne', sans-serif;
+    --font-b:   'Outfit', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-b);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-family: var(--font-b);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  input, select, textarea {
+    font-family: var(--font-b);
+    font-size: 15px;
+    outline: none;
+    border: none;
+  }
+
+  /* ── PAGES (SPA routing) ─────────────────────────────── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ── LANDING PAGE ────────────────────────────────────── */
+  #page-landing {
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+  }
+  #page-landing.active { display: flex; }
+  .landing-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: var(--font-d);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--white); }
+  .landing-nav-btns { display: flex; gap: 12px; }
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .landing-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(240,180,41,0.1);
+    border: 1px solid rgba(240,180,41,0.3);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-badge::before { content: '✦'; }
+  .hero-h1 {
+    font-family: var(--font-d);
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  .hero-h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted2);
+    line-height: 1.7;
+    margin-bottom: 40px;
+    max-width: 560px;
+  }
+  .hero-cta {
+    background: var(--gold);
+    color: #000;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 18px 36px;
+    border-radius: 14px;
+    transition: all 0.15s;
+    margin-bottom: 16px;
+  }
+  .hero-cta:hover { background: #ffc93d; transform: translateY(-1px); }
+  .hero-trust {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .hero-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .hero-trust-item::before { content: '✓'; color: var(--gold); font-weight: 700; }
+  .landing-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item {
+    background: var(--bg);
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--font-d);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); }
+  .landing-features {
+    padding: 60px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-d);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    transition: border-color 0.2s;
+  }
+  .feature-card:hover { border-color: var(--gold); }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+  .feature-title {
+    font-family: var(--font-d);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── AUTH PAGES ──────────────────────────────────────── */
+  .auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+  }
+  .auth-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .auth-logo {
+    font-family: var(--font-d);
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .auth-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--white);
+    font-size: 15px;
+    transition: border-color 0.15s;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--muted); }
+  select.form-input option { background: var(--bg3); }
+  .btn-primary {
+    width: 100%;
+    background: var(--gold);
+    color: #000;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 16px;
+    border-radius: 12px;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: #ffc93d; }
+  .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .auth-switch a { color: var(--gold); cursor: pointer; text-decoration: none; }
+  .auth-switch a:hover { text-decoration: underline; }
+  .error-msg {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--error);
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* ── DASHBOARD LAYOUT ────────────────────────────────── */
+  #page-dashboard {
+    display: none;
+    flex-direction: row;
+    min-height: 100vh;
+  }
+  #page-dashboard.active { display: flex; }
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: var(--navy);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    font-family: var(--font-d);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 8px;
+  }
+  .sidebar-logo span { color: var(--white); }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted2);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    position: relative;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(240,180,41,0.06); }
+  .nav-item .nav-icon { font-size: 17px; width: 20px; text-align: center; }
+  .nav-badge {
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+  .nav-dot {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-left: auto;
+  }
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .btn-sidebar-gold {
+    background: var(--gold);
+    color: #000;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+  .btn-sidebar-gold:hover { background: #ffc93d; }
+  .btn-sidebar-dark {
+    background: rgba(255,255,255,0.06);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+  }
+  .btn-sidebar-dark:hover { border-color: var(--muted2); }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 4px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+  .sidebar-link:hover { color: var(--white); }
+
+  /* ── MAIN CONTENT ────────────────────────────────────── */
+  .main-content {
+    flex: 1;
+    background: var(--navy2);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: var(--navy2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-share {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border: 1.5px solid var(--gold);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .topbar-share:hover { background: rgba(240,180,41,0.1); }
+  .topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted2);
+  }
+  .topbar-avatar {
+    width: 34px; height: 34px;
+    background: rgba(240,180,41,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 15px;
+  }
+
+  /* ── CONTENT AREAS ────────────────────────────────────── */
+  .content-area { padding: 28px; flex: 1; }
+  .content-area.hidden { display: none; }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .page-title {
+    font-family: var(--font-d);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .btn-add {
+    background: var(--gold);
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-add:hover { background: #ffc93d; }
+
+  /* ── CATALOGUE ────────────────────────────────────────── */
+  .catalogue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .style-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .style-card:hover { border-color: rgba(240,180,41,0.4); }
+  .style-card-img {
+    height: 180px;
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .style-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .style-card-body { padding: 16px; }
+  .style-card-name {
+    font-family: var(--font-d);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .style-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .tag-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(240,180,41,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(240,180,41,0.2);
+  }
+  .style-card-actions { display: flex; gap: 8px; }
+  .btn-card {
+    flex: 1;
+    padding: 9px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted2);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .btn-card:hover { border-color: var(--gold); color: var(--gold); }
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-title {
+    font-family: var(--font-d);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted2);
+    margin-bottom: 8px;
+  }
+  .empty-desc { font-size: 14px; max-width: 320px; margin: 0 auto; }
+
+  /* ── MEASUREMENT BOOK ────────────────────────────────── */
+  .measurement-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .saved-badge {
+    background: rgba(240,180,41,0.1);
+    border: 1px solid rgba(240,180,41,0.3);
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .intake-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .intake-title {
+    font-family: var(--font-d);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .intake-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .gender-btns { display: flex; gap: 10px; margin-bottom: 16px; }
+  .gender-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted2);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .gender-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(240,180,41,0.08); }
+  .measurements-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .measure-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .measure-group input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--white);
+    font-size: 14px;
+  }
+  .measure-group input:focus { border-color: var(--gold); outline: none; }
+  .ledger-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+  .ledger-card:hover { border-color: rgba(240,180,41,0.3); }
+  .ledger-avatar {
+    width: 44px; height: 44px;
+    background: rgba(240,180,41,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .ledger-info { flex: 1; }
+  .ledger-name { font-weight: 700; font-size: 15px; margin-bottom: 3px; }
+  .ledger-meta { font-size: 12px; color: var(--muted); }
+  .ledger-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .badge-female { background: rgba(244,114,182,0.15); color: #f472b6; }
+  .badge-male { background: rgba(96,165,250,0.15); color: #60a5fa; }
+
+  /* ── MODAL ───────────────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: var(--font-d);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close {
+    background: var(--bg3);
+    border: none;
+    color: var(--muted2);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { color: var(--white); background: var(--border); }
+
+  /* ── TOAST ───────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg3);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { color: var(--gold); font-size: 17px; }
+
+  /* ── QUIZ FLOW ───────────────────────────────────────── */
+  #page-quiz {
+    min-height: 100vh;
+    background: var(--bg);
+    flex-direction: column;
+  }
+  #page-quiz.active { display: flex; }
+  .quiz-back {
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.15s;
+    align-self: flex-start;
+  }
+  .quiz-back:hover { color: var(--white); }
+  .quiz-progress-wrap { padding: 0 20px 24px; }
+  .quiz-step-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .quiz-screen { display: none; flex: 1; flex-direction: column; padding: 0 20px 20px; }
+  .quiz-screen.active { display: flex; }
+  .quiz-q {
+    font-family: var(--font-d);
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .quiz-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .cards-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .cards-col { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .cards-swatches { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .answer-card {
+    background: var(--bg2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-height: 90px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .answer-card:active { transform: scale(0.97); }
+  .answer-card.selected {
+    border-color: var(--gold);
+    background: rgba(240,180,41,0.07);
+  }
+  .answer-card .card-icon { font-size: 26px; }
+  .answer-card .card-title { font-weight: 700; font-size: 14px; line-height: 1.3; }
+  .answer-card .card-sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .answer-card .check-icon {
+    display: none;
+    margin-left: auto;
+    margin-top: -4px;
+    color: var(--gold);
+    font-size: 18px;
+  }
+  .answer-card.selected .check-icon { display: block; }
+  .swatch-card {
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2.5px solid transparent;
+    transition: all 0.15s;
+    touch-action: manipulation;
+  }
+  .swatch-card.selected { border-color: var(--gold); }
+  .swatch-color { height: 72px; width: 100%; }
+  .swatch-label {
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted2);
+    background: var(--bg2);
+  }
+  .btn-next {
+    background: var(--gold);
+    color: #000;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 17px;
+    border-radius: 14px;
+    width: 100%;
+    margin-top: auto;
+    transition: all 0.15s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-next:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-next:not(:disabled):hover { background: #ffc93d; }
+
+  /* ── LOADING ─────────────────────────────────────────── */
+  #page-loading {
+    min-height: 100vh;
+    background: var(--bg);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 28px;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  #page-loading.active { display: flex; }
+  .spinner {
+    width: 54px; height: 54px;
+    border: 4px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-bar-wrap {
+    width: 240px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .loading-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .loading-text {
+    font-size: 16px;
+    color: var(--muted2);
+    min-height: 24px;
+    transition: opacity 0.3s;
+  }
+  .loading-hint { font-size: 13px; color: var(--muted); }
+
+  /* ── RESULT PAGE ─────────────────────────────────────── */
+  #page-result {
+    min-height: 100vh;
+    background: var(--bg);
+    flex-direction: column;
+    padding: 20px;
+    display: none;
+  }
+  #page-result.active { display: flex; }
+  .result-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .result-star { font-size: 28px; color: var(--gold); margin-bottom: 12px; }
+  .result-title {
+    font-family: var(--font-d);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .result-prepared { font-size: 13px; color: var(--muted); }
+  .result-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row-label { color: var(--muted); }
+  .result-row-value { font-weight: 600; text-align: right; }
+  .divider {
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+    margin: 20px 0;
+  }
+  .reco-section-title {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .reco-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .reco-bullet { color: var(--gold); font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+  .reco-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .reco-meas { font-size: 13px; color: var(--muted); }
+  .reco-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .reco-tag-match {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: rgba(240,180,41,0.12);
+    color: var(--gold);
+    border: 1px solid rgba(240,180,41,0.25);
+  }
+  .result-note { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 20px; }
+  .btn-whatsapp {
+    width: 100%;
+    background: var(--green);
+    color: #fff;
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 17px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.15s;
+  }
+  .btn-whatsapp:hover { background: #20ba5a; }
+  .btn-secondary {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted2);
+    font-family: var(--font-d);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 17px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .fallback-state {
+    text-align: center;
+    padding: 28px;
+    background: var(--bg3);
+    border-radius: 14px;
+    margin-bottom: 16px;
+  }
+  .fallback-icon { font-size: 36px; margin-bottom: 12px; }
+  .fallback-title { font-weight: 700; margin-bottom: 8px; font-family: var(--font-d); }
+  .fallback-desc { font-size: 13px; color: var(--muted); }
+
+  /* ── ANALYTICS / ORDERS PLACEHOLDER ─────────────────── */
+  .coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    text-align: center;
+    color: var(--muted);
+  }
+  .coming-soon .icon { font-size: 48px; margin-bottom: 16px; }
+  .coming-soon h3 { font-family: var(--font-d); font-size: 20px; color: var(--muted2); margin-bottom: 8px; }
+
+  /* ── ORDERS ──────────────────────────────────────────── */
+  .orders-list { display: flex; flex-direction: column; gap: 12px; }
+  .order-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .order-card:hover { border-color: rgba(240,180,41,0.3); }
+  .order-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: rgba(240,180,41,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .order-info { flex: 1; }
+  .order-client { font-weight: 700; font-size: 15px; margin-bottom: 3px; }
+  .order-detail { font-size: 13px; color: var(--muted); }
+  .order-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .status-pending { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .status-inprogress { background: rgba(96,165,250,0.15); color: #60a5fa; }
+  .status-ready { background: rgba(52,211,153,0.15); color: #34d399; }
+  .status-delivered { background: rgba(156,163,175,0.15); color: #9ca3af; }
+  .order-amount { font-weight: 700; color: var(--gold); font-size: 14px; }
+
+  /* ── ANALYTICS ────────────────────────────────────────── */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .analytics-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .analytics-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .analytics-value { font-family: var(--font-d); font-size: 32px; font-weight: 800; color: var(--gold); margin-bottom: 4px; }
+  .analytics-sub { font-size: 12px; color: var(--muted2); }
+  .analytics-bar-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+  .analytics-bar-label { font-size: 13px; color: var(--muted2); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .bar-track { height: 8px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .bar-fill { height: 100%; background: var(--gold); border-radius: 10px; transition: width 0.6s ease; }
+
+  /* ── FINANCE ─────────────────────────────────────────── */
+  .finance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .finance-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .finance-icon { font-size: 24px; margin-bottom: 10px; }
+  .finance-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .finance-value { font-family: var(--font-d); font-size: 26px; font-weight: 800; }
+  .finance-value.green { color: #34d399; }
+  .finance-value.gold { color: var(--gold); }
+  .finance-value.muted { color: var(--muted2); }
+  .transaction-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .transaction-row:last-child { border-bottom: none; }
+  .tx-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tx-dot.income { background: #34d399; }
+  .tx-dot.expense { background: var(--error); }
+  .tx-info { flex: 1; }
+  .tx-name { font-size: 14px; font-weight: 600; }
+  .tx-date { font-size: 12px; color: var(--muted); }
+  .tx-amount { font-weight: 700; font-size: 14px; }
+  .tx-amount.income { color: #34d399; }
+  .tx-amount.expense { color: var(--error); }
+
+  /* ── SHARE MODAL ─────────────────────────────────────── */
+  .share-url-box {
+    background: var(--bg3);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--muted2);
+    word-break: break-all;
+    margin-bottom: 14px;
+    font-family: monospace;
+  }
+  .share-channels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .share-channel-btn {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+  .share-channel-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .share-channel-btn.whatsapp { border-color: var(--green); color: var(--green); }
+  .share-channel-btn.whatsapp:hover { background: rgba(37,211,102,0.08); }
+
+  /* ── SETTINGS ────────────────────────────────────────── */
+  .settings-section { margin-bottom: 24px; }
+  .settings-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-label { font-size: 14px; }
+  .settings-row-val { font-size: 13px; color: var(--muted); }
+
+  /* ── MOBILE NAV BAR ──────────────────────────────────── */
+  .mobile-topbar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--navy);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .hamburger {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+  }
+  .mobile-overlay.open { display: block; }
+  .sidebar.mobile-open {
+    display: flex !important;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 300;
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .mobile-topbar { display: flex; }
+    .topbar { display: none; }
+    .landing-stats { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .measurements-grid { grid-template-columns: 1fr; }
+    .cards-swatches { grid-template-columns: 1fr 1fr; }
+    .content-area { padding: 16px; }
+    .modal { padding: 24px 20px; }
+    .analytics-grid { grid-template-columns: 1fr 1fr; }
+    .finance-grid { grid-template-columns: 1fr 1fr; }
+    .share-channels { grid-template-columns: 1fr; }
+    .catalogue-grid { grid-template-columns: 1fr; }
+    .hero-h1 { font-size: 28px; }
+    .landing-nav-btns .btn-ghost { display: none; }
+  }
+  @media (max-width: 480px) {
+    .analytics-grid { grid-template-columns: 1fr; }
+    .finance-grid { grid-template-columns: 1fr; }
+    .cards-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ── SCROLLBAR ───────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* ── WELCOME QUIZ ────────────────────────────────────── */
+  #quiz-welcome {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .quiz-welcome-powered {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .quiz-welcome-studio {
+    font-family: var(--font-d);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .quiz-welcome-tagline { font-size: 16px; color: var(--muted2); margin-bottom: 32px; }
+  .quiz-welcome-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .quiz-welcome-check {
+    font-size: 14px;
+    color: var(--muted2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+  .quiz-welcome-check::before { content: '✓'; color: var(--gold); font-weight: 700; }
+
+  /* ── CUSTOMER VIEW SCREEN ────────────────────────────── */
+  #page-customer {
+    min-height: 100vh;
+    background: var(--bg);
+    flex-direction: column;
+    display: none;
+  }
+  #page-customer.active { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     LANDING PAGE
+═══════════════════════════════════════════════════════ -->
+<div id="page-landing" class="page">
+  <nav class="landing-nav">
+    <div class="logo">Style<span>Swift</span></div>
+    <div class="landing-nav-btns">
+      <button class="btn-ghost" onclick="showPage('login')">Sign In</button>
+      <button class="hero-cta" style="padding:10px 20px;font-size:14px;border-radius:10px;border:none;" onclick="showPage('register')">Get Started Free</button>
+    </div>
+  </nav>
+  <div class="landing-hero">
+    <div class="hero-badge">Built for Accra Designers</div>
+    <h1 class="hero-h1">Stop Losing Measurements in <em>Paper Notebooks</em> and Chaotic WhatsApp Chats</h1>
+    <p class="hero-sub">StyleSwift gives Accra's independent fashion designers a digital measurement book, automated client lookbooks, and a 90-second style discovery portal.</p>
+    <button class="hero-cta" onclick="showPage('register')">Set Up Your Digital Studio (Free)</button>
+    <div class="hero-trust">
+      <span class="hero-trust-item">No download required</span>
+      <span class="hero-trust-item">Free for up to 10 clients</span>
+      <span class="hero-trust-item">Works on any Android</span>
+    </div>
+  </div>
+  <div class="landing-stats">
+    <div class="stat-item"><div class="stat-num">92%</div><div class="stat-label">of tailors lose money to paper systems</div></div>
+    <div class="stat-item"><div class="stat-num">90s</div><div class="stat-label">for a client to complete style discovery</div></div>
+    <div class="stat-item"><div class="stat-num">78%</div><div class="stat-label">willingness to pay (18 interviews)</div></div>
+  </div>
+  <div class="landing-features">
+    <div class="section-label">What you get</div>
+    <h2 class="section-title">Everything your studio needs, in one place</h2>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">📏</div><div class="feature-title">Digital Measurement Book</div><div class="feature-desc">Replace paper notebooks with a gender-split digital ledger. Every client measurement stored safely and searchable.</div></div>
+      <div class="feature-card"><div class="feature-icon">✨</div><div class="feature-title">Style Discovery Service</div><div class="feature-desc">Share a personalised quiz link with clients. They answer 5 questions in 90 seconds and receive matched style recommendations.</div></div>
+      <div class="feature-card"><div class="feature-icon">🏷️</div><div class="feature-title">Reference Tag Engine</div><div class="feature-desc">Tag your designs by occasion, style, fabric and more. Our AI matches client preferences to YOUR catalogue — not a generic algorithm.</div></div>
+      <div class="feature-card"><div class="feature-icon">💬</div><div class="feature-title">WhatsApp Integration</div><div class="feature-desc">Client profiles are sent directly to you on WhatsApp before they even sit down for a consultation.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     REGISTER PAGE
+═══════════════════════════════════════════════════════ -->
+<div id="page-register" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">StyleSwift</div>
+      <div class="auth-subtitle">Create your free digital studio</div>
+      <div class="error-msg" id="reg-error"></div>
+      <div class="form-group">
+        <label class="form-label">Studio / Business Name</label>
+        <input class="form-input" id="reg-studio" type="text" placeholder="e.g., Omegah Fashion">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="e.g., Ama Mensah">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="reg-email" type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="reg-pass" type="password" placeholder="Create a password">
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Create My Free Studio →</button>
+      <div class="auth-switch">Already have an account? <a onclick="showPage('login')">Sign In</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     LOGIN PAGE
+═══════════════════════════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">StyleSwift</div>
+      <div class="auth-subtitle">Sign in to your studio</div>
+      <div class="error-msg" id="login-error"></div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="login-email" type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="Your password">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In to My Studio →</button>
+      <div class="auth-switch">New designer? <a onclick="showPage('register')">Create free account</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MAIN DASHBOARD
+═══════════════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+
+  <!-- MOBILE OVERLAY -->
+  <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="main-sidebar">
+    <div class="sidebar-logo">Style<span>Swift</span></div>
+    <nav>
+      <div class="nav-item active" onclick="switchTab('catalogue')" id="nav-catalogue">
+        <span class="nav-icon">🗂️</span> Catalogue <span class="nav-dot"></span>
+      </div>
+      <div class="nav-item" onclick="switchTab('measurement')" id="nav-measurement">
+        <span class="nav-icon">📏</span> Measurement Book
+      </div>
+      <div class="nav-item" onclick="switchTab('customers')" id="nav-customers">
+        <span class="nav-icon">👥</span> Customers
+      </div>
+      <div class="nav-item" onclick="switchTab('orders')" id="nav-orders">
+        <span class="nav-icon">📦</span> Orders <span class="nav-badge">2</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('analytics')" id="nav-analytics">
+        <span class="nav-icon">📊</span> Analytics
+      </div>
+      <div class="nav-item" onclick="switchTab('finance')" id="nav-finance">
+        <span class="nav-icon">💰</span> Finance
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-sidebar-gold" onclick="openShareModal()">🔗 Share My Link</button>
+      <button class="btn-sidebar-dark" onclick="goToCustomerView()">👤 Demo Customer View</button>
+      <button class="sidebar-link" onclick="openModal('modal-settings')">⚙️ Settings</button>
+      <button class="sidebar-link" onclick="doLogout()">→ Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <!-- Mobile topbar -->
+    <div class="mobile-topbar">
+      <button class="hamburger" onclick="openMobileSidebar()">☰</button>
+      <div class="logo" style="font-size:18px">Style<span style="color:#fff">Swift</span></div>
+      <button class="topbar-share" style="font-size:12px;padding:7px 12px" onclick="openShareModal()">🔗</button>
+    </div>
+    <!-- Desktop topbar -->
+    <div class="topbar">
+      <button class="topbar-share" onclick="openShareModal()">🔗 Share Link</button>
+      <div class="topbar-user">
+        <div class="topbar-avatar">👗</div>
+        <span id="topbar-name">Welcome, Designer</span>
+      </div>
+    </div>
+
+    <!-- CATALOGUE TAB -->
+    <div class="content-area" id="tab-catalogue">
+      <div class="page-header">
+        <h1 class="page-title">My Catalogue</h1>
+        <button class="btn-add" onclick="openAddStyle()">+ Add Style</button>
+      </div>
+      <div class="catalogue-grid" id="catalogue-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- MEASUREMENT BOOK TAB -->
+    <div class="content-area hidden" id="tab-measurement">
+      <div class="page-header">
+        <h1 class="page-title">Measurement Book</h1>
+        <div class="measurement-header-info">
+          <span class="saved-badge" id="meas-count">0 saved</span>
+        </div>
+      </div>
+      <div class="intake-card">
+        <div class="intake-title">✦ New Client Intake</div>
+        <div class="intake-sub">Capture the client's details and measurements</div>
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" id="m-name" type="text" placeholder="e.g., Ama Mensah">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Phone Number</label>
+            <input class="form-input" id="m-phone" type="tel" placeholder="e.g., 024 000 0000">
+          </div>
+        </div>
+        <label class="form-label" style="margin-bottom:10px;display:block">Gender</label>
+        <div class="gender-btns">
+          <button class="gender-btn" id="gbtn-female" onclick="selectGender('female')">♀ Female</button>
+          <button class="gender-btn" id="gbtn-male" onclick="selectGender('male')">♂ Male</button>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label class="form-label">Occasion</label>
+          <select class="form-input" id="m-occasion">
+            <option value="">Select occasion</option>
+            <option>Wedding & Bridal</option>
+            <option>Naming Ceremony</option>
+            <option>Corporate & Business</option>
+            <option>Festival & Durbar</option>
+            <option>Graduation</option>
+            <option>Birthday & Party</option>
+            <option>Everyday & Casual</option>
+          </select>
+        </div>
+        <div id="female-measurements" style="display:none">
+          <div class="form-label" style="margin-bottom:10px">Body Measurements (inches)</div>
+          <div class="measurements-grid">
+            <div class="measure-group"><label>Bust/Chest</label><input class="form-input" id="m-bust" type="number" placeholder='e.g. 36"'></div>
+            <div class="measure-group"><label>Waist</label><input class="form-input" id="m-waist" type="number" placeholder='e.g. 28"'></div>
+            <div class="measure-group"><label>Hips</label><input class="form-input" id="m-hips" type="number" placeholder='e.g. 40"'></div>
+            <div class="measure-group"><label>Shoulder</label><input class="form-input" id="m-shoulder" type="number" placeholder='e.g. 15"'></div>
+            <div class="measure-group"><label>Dress Length</label><input class="form-input" id="m-length" type="number" placeholder='e.g. 44"'></div>
+            <div class="measure-group"><label>Arm Length</label><input class="form-input" id="m-arm" type="number" placeholder='e.g. 24"'></div>
+          </div>
+        </div>
+        <div id="male-measurements" style="display:none">
+          <div class="form-label" style="margin-bottom:10px">Body Measurements (inches)</div>
+          <div class="measurements-grid">
+            <div class="measure-group"><label>Chest</label><input class="form-input" id="m-chest" type="number" placeholder='e.g. 40"'></div>
+            <div class="measure-group"><label>Waist</label><input class="form-input" id="m-waist-m" type="number" placeholder='e.g. 34"'></div>
+            <div class="measure-group"><label>Hips/Seat</label><input class="form-input" id="m-seat" type="number" placeholder='e.g. 40"'></div>
+            <div class="measure-group"><label>Shoulder</label><input class="form-input" id="m-shoulder-m" type="number" placeholder='e.g. 17"'></div>
+            <div class="measure-group"><label>Trouser Length</label><input class="form-input" id="m-trouser" type="number" placeholder='e.g. 42"'></div>
+            <div class="measure-group"><label>Neck</label><input class="form-input" id="m-neck" type="number" placeholder='e.g. 16"'></div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:14px">
+          <label class="form-label">Special Notes</label>
+          <textarea class="form-input" id="m-notes" rows="3" style="resize:vertical" placeholder="Any special requests, fitting preferences..."></textarea>
+        </div>
+        <button class="btn-primary" id="save-meas-btn" onclick="saveMeasurement()" style="margin-top:4px">Save to Measurement Book →</button>
+      </div>
+      <h2 style="font-family:var(--font-d);font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px">📖 Master Ledger</h2>
+      <div id="ledger-list"></div>
+    </div>
+
+    <!-- CUSTOMERS TAB -->
+    <div class="content-area hidden" id="tab-customers">
+      <div class="page-header"><h1 class="page-title">Customers</h1></div>
+      <div id="customers-list"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div class="content-area hidden" id="tab-orders">
+      <div class="page-header">
+        <h1 class="page-title">Orders</h1>
+        <button class="btn-add" onclick="openAddOrder()">+ New Order</button>
+      </div>
+      <!-- Filter pills -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+        <button class="order-filter active" data-filter="all" onclick="filterOrders('all',this)">All</button>
+        <button class="order-filter" data-filter="pending" onclick="filterOrders('pending',this)">Pending</button>
+        <button class="order-filter" data-filter="inprogress" onclick="filterOrders('inprogress',this)">In Progress</button>
+        <button class="order-filter" data-filter="ready" onclick="filterOrders('ready',this)">Ready</button>
+        <button class="order-filter" data-filter="delivered" onclick="filterOrders('delivered',this)">Delivered</button>
+      </div>
+      <style>
+        .order-filter { padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s; }
+        .order-filter.active,.order-filter:hover { border-color:var(--gold);color:var(--gold);background:rgba(240,180,41,0.07); }
+      </style>
+      <div class="orders-list" id="orders-list"></div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div class="content-area hidden" id="tab-analytics">
+      <div class="page-header"><h1 class="page-title">Analytics</h1></div>
+      <div class="analytics-grid" id="analytics-stats"></div>
+      <h3 style="font-family:var(--font-d);font-size:16px;font-weight:700;margin-bottom:14px">Catalogue Tag Distribution</h3>
+      <div id="analytics-bars"></div>
+    </div>
+
+    <!-- FINANCE TAB -->
+    <div class="content-area hidden" id="tab-finance">
+      <div class="page-header">
+        <h1 class="page-title">Finance</h1>
+        <button class="btn-add" onclick="openAddTransaction()">+ Add Transaction</button>
+      </div>
+      <div class="finance-grid" id="finance-summary"></div>
+      <div class="intake-card" style="margin-bottom:0">
+        <div class="intake-title">💳 Transaction Ledger</div>
+        <div style="margin-top:16px" id="finance-ledger"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     CUSTOMER VIEW (WELCOME + QUIZ)
+═══════════════════════════════════════════════════════ -->
+<div id="page-customer" class="page">
+  <!-- WELCOME -->
+  <div id="quiz-welcome">
+    <div class="quiz-welcome-powered">Powered by StyleSwift</div>
+    <div class="quiz-welcome-studio" id="welcome-studio">Omegah Fashion Studio</div>
+    <div class="quiz-welcome-tagline">Tell us about your style so your designer can prepare your perfect look</div>
+    <div class="quiz-welcome-checks">
+      <div class="quiz-welcome-check">No account needed</div>
+      <div class="quiz-welcome-check">Takes 60 seconds</div>
+      <div class="quiz-welcome-check">5 quick taps</div>
+    </div>
+    <button class="hero-cta" onclick="startQuiz()" style="border:none">Begin My Style Discovery →</button>
+    <button class="btn-ghost" onclick="goBack()" style="margin-top:16px">← Back to Dashboard</button>
+  </div>
+
+  <!-- QUIZ WRAPPER (shown after welcome) -->
+  <div id="quiz-wrapper" style="display:none;flex:1;flex-direction:column">
+    <button class="quiz-back" onclick="quizBack()">← Back</button>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-step-label" id="step-label">Step 1 of 5</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+    </div>
+
+    <!-- Q1: Occasion -->
+    <div class="quiz-screen active" id="quiz-q1">
+      <div class="quiz-q">What are you getting dressed for?</div>
+      <div class="quiz-sub">Your designer will prepare looks specifically for this event</div>
+      <div class="cards-grid-2">
+        <div class="answer-card" data-field="occasion" data-value="Wedding & Bridal" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">💍</span><span class="card-title">Wedding & Bridal</span><span class="card-sub">Ceremony, engagement, or bridal look</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Naming Ceremony" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🎊</span><span class="card-title">Naming Ceremony</span><span class="card-sub">Traditional outdooring or baptism</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Corporate & Business" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">💼</span><span class="card-title">Corporate & Business</span><span class="card-sub">Meetings, presentations, formal</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Festival & Durbar" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🥁</span><span class="card-title">Festival & Durbar</span><span class="card-sub">Cultural celebration, community festival</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Graduation" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🎓</span><span class="card-title">Graduation</span><span class="card-sub">School or university ceremony</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Birthday & Party" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🎂</span><span class="card-title">Birthday & Party</span><span class="card-sub">Celebration, photoshoot, social event</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Everyday & Casual" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">☀️</span><span class="card-title">Everyday & Casual</span><span class="card-sub">Daily wear or personal wardrobe</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="occasion" data-value="Funeral & Wake-Keeping" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🕊️</span><span class="card-title">Funeral & Wake-Keeping</span><span class="card-sub">Respectful, appropriate attire</span><span class="check-icon">✓</span>
+        </div>
+      </div>
+      <button class="btn-next" id="next-q1" disabled onclick="nextQuiz(1)">Next →</button>
+    </div>
+
+    <!-- Q2: Gender -->
+    <div class="quiz-screen" id="quiz-q2">
+      <div class="quiz-q">Who is this outfit for?</div>
+      <div class="quiz-sub">Helps your designer pull the right silhouettes and cuts</div>
+      <div class="cards-col">
+        <div class="answer-card" data-field="gender" data-value="Women's Wear" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center;min-height:80px">
+          <span class="card-icon">👗</span><div><div class="card-title">Women's Wear</div><div class="card-sub">Dresses, skirts, tops, full women's outfits</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="gender" data-value="Men's Wear" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center;min-height:80px">
+          <span class="card-icon">👔</span><div><div class="card-title">Men's Wear</div><div class="card-sub">Suits, Kaftan, Agbada, full men's outfits</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="gender" data-value="Children's Wear" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center;min-height:80px">
+          <span class="card-icon">👶</span><div><div class="card-title">Children's Wear</div><div class="card-sub">Boys or girls outfits, family matching sets</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+      </div>
+      <button class="btn-next" id="next-q2" disabled onclick="nextQuiz(2)">Next →</button>
+    </div>
+
+    <!-- Q3: Style Direction -->
+    <div class="quiz-screen" id="quiz-q3">
+      <div class="quiz-q">What feeling do you want this outfit to give?</div>
+      <div class="quiz-sub">Your designer will match this to their signature aesthetic</div>
+      <div class="cards-grid-2">
+        <div class="answer-card" data-field="styleDirection" data-value="Traditional & Ceremonial" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🌍</span><span class="card-title">Traditional & Ceremonial</span><span class="card-sub">Rooted in Ghanaian cultural heritage</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="styleDirection" data-value="Contemporary African" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">✨</span><span class="card-title">Contemporary African</span><span class="card-sub">Modern cuts with African identity</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="styleDirection" data-value="Afro-Modern Fusion" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🔥</span><span class="card-title">Afro-Modern Fusion</span><span class="card-sub">African tradition meets global trends</span><span class="check-icon">✓</span>
+        </div>
+        <div class="answer-card" data-field="styleDirection" data-value="Western Formal" onclick="selectAnswerFromCard(this)">
+          <span class="card-icon">🎩</span><span class="card-title">Western Formal</span><span class="card-sub">Classic suit cuts, international formal wear</span><span class="check-icon">✓</span>
+        </div>
+      </div>
+      <div class="answer-card" style="margin-bottom:16px" data-field="styleDirection" data-value="Casual & Streetwear" onclick="selectAnswerFromCard(this)">
+        <span class="card-icon">😎</span><span class="card-title">Casual & Streetwear</span><span class="card-sub">Relaxed, everyday, comfortable and stylish</span><span class="check-icon">✓</span>
+      </div>
+      <button class="btn-next" id="next-q3" disabled onclick="nextQuiz(3)">Next →</button>
+    </div>
+
+    <!-- Q4: Garment Type -->
+    <div class="quiz-screen" id="quiz-q4">
+      <div class="quiz-q">What kind of piece are you looking for?</div>
+      <div class="quiz-sub">This narrows down your designer's catalogue for you</div>
+      <div class="cards-col">
+        <div class="answer-card" data-field="garmentType" data-value="Full Outfit / Complete Set" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center">
+          <span class="card-icon">👑</span><div><div class="card-title">Full Outfit / Complete Set</div><div class="card-sub">A complete head-to-toe look</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="garmentType" data-value="Dress / Gown" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center">
+          <span class="card-icon">👗</span><div><div class="card-title">Dress / Gown</div><div class="card-sub">A single-piece dress, gown, or jumpsuit</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="garmentType" data-value="Traditional Attire (Kaba, Kaftan, Agbada)" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center">
+          <span class="card-icon">🥻</span><div><div class="card-title">Traditional Attire</div><div class="card-sub">Kaba & Slit, Kaftan, Agbada, or Kente cloth</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="garmentType" data-value="Suit / Blazer Set" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center">
+          <span class="card-icon">🧥</span><div><div class="card-title">Suit / Blazer Set</div><div class="card-sub">Tailored jacket with matching trousers or skirt</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+        <div class="answer-card" data-field="garmentType" data-value="Top Only" onclick="selectAnswerFromCard(this)" style="flex-direction:row;align-items:center">
+          <span class="card-icon">👕</span><div><div class="card-title">Top or Bottom Separately</div><div class="card-sub">Just a blouse, shirt, skirt or trousers</div></div><span class="check-icon" style="margin-left:auto">✓</span>
+        </div>
+      </div>
+      <button class="btn-next" id="next-q4" disabled onclick="nextQuiz(4)">Next →</button>
+    </div>
+
+    <!-- Q5: Fabric -->
+    <div class="quiz-screen" id="quiz-q5">
+      <div class="quiz-q">Do you have a fabric preference?</div>
+      <div class="quiz-sub">Your designer will use this to suggest the right materials</div>
+      <div class="cards-swatches">
+        <div class="swatch-card" data-field="fabricFamily" data-value="Kente" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:linear-gradient(135deg,#B8860B,#FFD700,#006400,#8B0000)"></div>
+          <div class="swatch-label">Kente</div>
+        </div>
+        <div class="swatch-card" data-field="fabricFamily" data-value="Ankara / Wax Print" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:linear-gradient(135deg,#FF6B35,#2ECC71,#3498DB,#E74C3C)"></div>
+          <div class="swatch-label">Ankara / Wax Print</div>
+        </div>
+        <div class="swatch-card" data-field="fabricFamily" data-value="Plain / Solid Fabric" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:#F5F5DC"></div>
+          <div class="swatch-label">Plain / Solid Fabric</div>
+        </div>
+        <div class="swatch-card" data-field="fabricFamily" data-value="Lace" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:linear-gradient(135deg,#FFB6C1,#FFC0CB,#FF69B4)"></div>
+          <div class="swatch-label">Lace</div>
+        </div>
+        <div class="swatch-card" data-field="fabricFamily" data-value="Velvet" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:linear-gradient(135deg,#4B0082,#800080,#6A0DAD)"></div>
+          <div class="swatch-label">Velvet</div>
+        </div>
+        <div class="swatch-card" data-field="fabricFamily" data-value="Chiffon / Lightweight" onclick="selectAnswerFromCard(this)">
+          <div class="swatch-color" style="background:linear-gradient(135deg,#E8F4FD,#D4EDFC,#B8DDF7)"></div>
+          <div class="swatch-label">Chiffon / Lightweight</div>
+        </div>
+      </div>
+      <button class="btn-next" id="next-q5" disabled onclick="nextQuiz(5)">Submit & See My Profile →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     LOADING SCREEN
+═══════════════════════════════════════════════════════ -->
+<div id="page-loading" class="page">
+  <div class="spinner"></div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-text" id="loading-text">Reading your style profile...</div>
+  <div class="loading-hint">Matching your preferences to your designer's catalogue...</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     RESULT PAGE
+═══════════════════════════════════════════════════════ -->
+<div id="page-result" class="page">
+  <button class="quiz-back" onclick="showPage('customer')" style="margin-bottom:8px">← Start Over</button>
+  <div class="result-header">
+    <div class="result-star">✦</div>
+    <div class="result-title">YOUR PERSONAL STYLE PROFILE</div>
+    <div class="result-prepared" id="result-prepared">Prepared by your designer</div>
+  </div>
+  <div class="result-card">
+    <div class="result-row"><span class="result-row-label">Occasion</span><span class="result-row-value" id="res-occasion">—</span></div>
+    <div class="result-row"><span class="result-row-label">For</span><span class="result-row-value" id="res-gender">—</span></div>
+    <div class="result-row"><span class="result-row-label">Style Direction</span><span class="result-row-value" id="res-style">—</span></div>
+    <div class="result-row"><span class="result-row-label">Looking For</span><span class="result-row-value" id="res-garment">—</span></div>
+    <div class="result-row"><span class="result-row-label">Fabric Preference</span><span class="result-row-value" id="res-fabric">—</span></div>
+    <div class="divider"></div>
+    <div class="reco-section-title">✦ MATCHED LOOKS FROM THE CATALOGUE</div>
+    <div id="reco-list"></div>
+  </div>
+  <div class="result-note">Your designer will use this profile to prepare your perfect look.</div>
+  <button class="btn-whatsapp" onclick="sendWhatsApp()">📱 Send Profile to My Designer via WhatsApp →</button>
+  <button class="btn-secondary" onclick="showPage('register')">Save My Profile — Create Free Account</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════════════ -->
+<!-- Add Style Modal -->
+<div class="modal-overlay" id="modal-add-style">
+  <div class="modal">
+    <div class="modal-title">
+      Add New Style <button class="modal-close" onclick="closeModal('modal-add-style')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Style Name *</label>
+      <input class="form-input" id="s-name" type="text" placeholder="e.g., Royal Kente Bridal Gown">
+    </div>
+
+    <!-- PHOTO UPLOAD -->
+    <div class="form-group">
+      <label class="form-label">Design Photo</label>
+      <div id="photo-preview-wrap" style="display:none;margin-bottom:10px;position:relative">
+        <img id="photo-preview" src="" alt="Preview" style="width:100%;height:180px;object-fit:cover;border-radius:10px;border:1.5px solid var(--border)">
+        <button onclick="clearPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);border:none;color:#fff;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer">✕ Remove</button>
+      </div>
+      <label for="s-photo" id="photo-upload-label" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:20px;border:1.5px dashed var(--border);border-radius:10px;cursor:pointer;background:var(--bg3);transition:border-color 0.15s;color:var(--muted2);font-size:14px">
+        <span style="font-size:24px">📷</span>
+        <span>Upload your design photo<br><span style="font-size:12px;color:var(--muted)">JPG or PNG · Max 2MB</span></span>
+      </label>
+      <input type="file" id="s-photo" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="previewPhoto(this)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Occasion Tag *</label>
+      <select class="form-input" id="s-occasion">
+        <option value="">Select occasion</option>
+        <option>Wedding & Bridal</option>
+        <option>Naming Ceremony</option>
+        <option>Funeral & Wake-Keeping</option>
+        <option>Corporate & Business</option>
+        <option>Festival & Durbar</option>
+        <option>Graduation</option>
+        <option>Birthday & Party</option>
+        <option>Everyday & Casual</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gender Tag *</label>
+      <div class="gender-btns">
+        <button class="gender-btn" id="sg-female" onclick="selectStyleGender('female')">♀ Women's Wear</button>
+        <button class="gender-btn" id="sg-male" onclick="selectStyleGender('male')">♂ Men's Wear</button>
+        <button class="gender-btn" id="sg-children" onclick="selectStyleGender('children')" style="flex:none;font-size:12px">👶 Children's</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Style Direction *</label>
+      <select class="form-input" id="s-direction">
+        <option value="">Select style direction</option>
+        <option>Traditional & Ceremonial</option>
+        <option>Contemporary African</option>
+        <option>Afro-Modern Fusion</option>
+        <option>Western Formal</option>
+        <option>Casual & Streetwear</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Garment Type *</label>
+      <select class="form-input" id="s-garment">
+        <option value="">Select garment type</option>
+        <option>Full Outfit / Complete Set</option>
+        <option>Dress / Gown</option>
+        <option>Traditional Attire (Kaba, Kaftan, Agbada)</option>
+        <option>Suit / Blazer Set</option>
+        <option>Top Only</option>
+        <option>Bottom Only</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fabric Family *</label>
+      <select class="form-input" id="s-fabric">
+        <option value="">Select fabric</option>
+        <option>Kente</option>
+        <option>Ankara / Wax Print</option>
+        <option>Plain / Solid Fabric</option>
+        <option>Lace</option>
+        <option>Velvet</option>
+        <option>Chiffon / Lightweight</option>
+        <option>Kaba & Slit Fabric</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Style Notes</label>
+      <textarea class="form-input" id="s-notes" rows="3" style="resize:vertical" placeholder="Describe what makes this design special..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Price Range (optional)</label>
+      <select class="form-input" id="s-price">
+        <option value="">Select price range</option>
+        <option>Under GHS 500</option>
+        <option>GHS 500 – 1,000</option>
+        <option>GHS 1,000 – 2,000</option>
+        <option>GHS 2,000 – 5,000</option>
+        <option>Above GHS 5,000</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="saveStyle()">Save to Catalogue →</button>
+  </div>
+</div>
+
+<!-- View Measurement Modal -->
+<div class="modal-overlay" id="modal-view-meas">
+  <div class="modal">
+    <div class="modal-title">Client Profile <button class="modal-close" onclick="closeModal('modal-view-meas')">✕</button></div>
+    <div id="meas-detail-content"></div>
+  </div>
+</div>
+
+<!-- Add Order Modal -->
+<div class="modal-overlay" id="modal-add-order">
+  <div class="modal">
+    <div class="modal-title">New Order <button class="modal-close" onclick="closeModal('modal-add-order')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Client Name *</label>
+      <input class="form-input" id="o-client" type="text" placeholder="e.g., Ama Mensah">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Garment / Style *</label>
+      <input class="form-input" id="o-garment" type="text" placeholder="e.g., Kente Bridal Gown">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Due Date *</label>
+      <input class="form-input" id="o-due" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount (GHS)</label>
+      <input class="form-input" id="o-amount" type="number" placeholder="e.g., 850">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <select class="form-input" id="o-status">
+        <option value="pending">Pending</option>
+        <option value="inprogress">In Progress</option>
+        <option value="ready">Ready for Pickup</option>
+        <option value="delivered">Delivered</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-input" id="o-notes" rows="2" placeholder="Any special instructions..."></textarea>
+    </div>
+    <button class="btn-primary" onclick="saveOrder()">Save Order →</button>
+  </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div class="modal-overlay" id="modal-add-transaction">
+  <div class="modal">
+    <div class="modal-title">Add Transaction <button class="modal-close" onclick="closeModal('modal-add-transaction')">✕</button></div>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <div class="gender-btns">
+        <button class="gender-btn selected" id="tx-income-btn" onclick="selectTxType('income')">📈 Income</button>
+        <button class="gender-btn" id="tx-expense-btn" onclick="selectTxType('expense')">📉 Expense</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description *</label>
+      <input class="form-input" id="tx-desc" type="text" placeholder="e.g., Bridal gown payment — Ama">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Amount (GHS) *</label>
+      <input class="form-input" id="tx-amount" type="number" placeholder="e.g., 850">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input class="form-input" id="tx-date" type="date">
+    </div>
+    <button class="btn-primary" onclick="saveTransaction()">Save Transaction →</button>
+  </div>
+</div>
+
+<!-- Share Link Modal -->
+<div class="modal-overlay" id="modal-share">
+  <div class="modal">
+    <div class="modal-title">Share Your Studio Link <button class="modal-close" onclick="closeModal('modal-share')">✕</button></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Share this link with your clients. They will be taken directly to your Style Discovery quiz.</p>
+    <div class="share-url-box" id="share-url-display">Loading...</div>
+    <div class="share-channels">
+      <button class="share-channel-btn whatsapp" onclick="shareOnWhatsApp()">💬 Share on WhatsApp</button>
+      <button class="share-channel-btn" onclick="copyShareLink()">📋 Copy Link</button>
+    </div>
+    <div style="margin-top:20px;padding:16px;background:var(--bg3);border-radius:12px">
+      <div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Pro Tip</div>
+      <div style="font-size:13px;color:var(--muted2)">Add this link to your Instagram bio, WhatsApp status, or send it directly to clients before their consultation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-title">Studio Settings <button class="modal-close" onclick="closeModal('modal-settings')">✕</button></div>
+    <div class="settings-section">
+      <div class="settings-label">Account</div>
+      <div class="settings-row">
+        <span class="settings-row-label">Studio Name</span>
+        <span class="settings-row-val" id="set-studio">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Full Name</span>
+        <span class="settings-row-val" id="set-name">—</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Email</span>
+        <span class="settings-row-val" id="set-email">—</span>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">Update Studio Name</div>
+      <div class="form-group">
+        <input class="form-input" id="set-new-studio" type="text" placeholder="New studio name">
+      </div>
+      <button class="btn-primary" style="margin-top:0" onclick="updateStudioName()">Update Name →</button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">Plan</div>
+      <div class="settings-row">
+        <span class="settings-row-label">Current Plan</span>
+        <span style="background:rgba(240,180,41,0.1);color:var(--gold);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(240,180,41,0.3)">FREE TIER</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Client Limit</span>
+        <span class="settings-row-val">10 clients/month</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-row-label">Upgrade to Pro</span>
+        <span style="color:var(--gold);font-weight:600;font-size:13px">GHS 150/month</span>
+      </div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">Danger Zone</div>
+      <button class="btn-primary" style="background:rgba(248,113,113,0.15);color:var(--error);border:1px solid rgba(248,113,113,0.3)" onclick="confirmClearData()">Clear All Studio Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay" id="modal-order-detail">
+  <div class="modal">
+    <div class="modal-title">Order Details <button class="modal-close" onclick="closeModal('modal-order-detail')">✕</button></div>
+    <div id="order-detail-content"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// STATE & STORAGE
+// ══════════════════════════════════════════════════════
+const SS = {
+  get: k => { try { return JSON.parse(localStorage.getItem('ss_'+k)); } catch { return null; } },
+  set: (k,v) => { try { localStorage.setItem('ss_'+k, JSON.stringify(v)); } catch {} },
+  remove: k => { try { localStorage.removeItem('ss_'+k); } catch {} }
+};
+
+let currentUser = SS.get('user');
+let styleGenderSelected = '';
+let measGenderSelected = '';
+let quizAnswers = { occasion:'', gender:'', styleDirection:'', garmentType:'', fabricFamily:'' };
+let currentQuizStep = 1;
+let editingStyleId = null;
+
+// ══════════════════════════════════════════════════════
+// ROUTING
+// ══════════════════════════════════════════════════════
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  if (currentUser) showPage('dashboard');
+  else showPage('landing');
+}
+
+// ══════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════
+function doRegister() {
+  const studio = document.getElementById('reg-studio').value.trim();
+  const name   = document.getElementById('reg-name').value.trim();
+  const email  = document.getElementById('reg-email').value.trim();
+  const pass   = document.getElementById('reg-pass').value;
+  const err    = document.getElementById('reg-error');
+  err.style.display = 'none';
+  if (!studio || !name || !email || !pass) { err.textContent = 'Please fill in all fields.'; err.style.display='block'; return; }
+  if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; err.style.display='block'; return; }
+  const users = SS.get('users') || {};
+  if (users[email]) { err.textContent = 'An account with this email already exists.'; err.style.display='block'; return; }
+  const user = { studio, name, email, pass };
+  users[email] = user;
+  SS.set('users', users);
+  SS.set('user', user);
+  currentUser = user;
+  initDashboard();
+  seedDemoData();
+  showPage('dashboard');
+  showToast('Welcome to StyleSwift, ' + studio + '! 🎉');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-error');
+  err.style.display = 'none';
+  const users = SS.get('users') || {};
+  if (!users[email] || users[email].pass !== pass) { err.textContent = 'Incorrect email or password.'; err.style.display='block'; return; }
+  SS.set('user', users[email]);
+  currentUser = users[email];
+  initDashboard();
+  showPage('dashboard');
+  showToast('Welcome back, ' + currentUser.studio + '!');
+}
+
+function doLogout() {
+  SS.remove('user');
+  currentUser = null;
+  showPage('landing');
+}
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+function initDashboard() {
+  if (!currentUser) return;
+  document.getElementById('topbar-name').textContent = 'Welcome, ' + currentUser.studio;
+  document.getElementById('welcome-studio').textContent = currentUser.studio;
+  seedDemoData();
+  seedDemoOrders();
+  renderCatalogue();
+  renderLedger();
+  renderCustomers();
+}
+
+function switchTab(tab) {
+  ['catalogue','measurement','customers','orders','analytics','finance'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.classList.toggle('hidden', t !== tab);
+    const nav = document.getElementById('nav-'+t);
+    if (nav) nav.classList.toggle('active', t === tab);
+  });
+  if (tab === 'catalogue') renderCatalogue();
+  if (tab === 'measurement') { renderLedger(); updateMeasCount(); }
+  if (tab === 'customers') renderCustomers();
+  if (tab === 'orders') renderOrders(activeOrderFilter || 'all');
+  if (tab === 'analytics') renderAnalytics();
+  if (tab === 'finance') renderFinance();
+  closeMobileSidebar();
+}
+
+function copyLink() {
+  const link = window.location.href.split('?')[0] + '?view=customer&designer=' + encodeURIComponent(currentUser?.studio||'');
+  navigator.clipboard.writeText(link).then(() => showToast('Link copied to clipboard! 🔗')).catch(() => showToast('Link: ' + link));
+}
+
+function goToCustomerView() {
+  document.getElementById('welcome-studio').textContent = currentUser?.studio || 'Our Studio';
+  resetQuiz();
+  showPage('customer');
+}
+
+// ══════════════════════════════════════════════════════
+// CATALOGUE
+// ══════════════════════════════════════════════════════
+function getCatalogue() { return SS.get('catalogue_' + (currentUser?.email||'demo')) || []; }
+function saveCatalogue(data) { SS.set('catalogue_' + (currentUser?.email||'demo'), data); }
+
+// ══════════════════════════════════════════════════════
+// PHOTO UPLOAD HELPERS
+// ══════════════════════════════════════════════════════
+function previewPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('Image too large — please use under 2MB ⚠️');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('photo-preview').src = e.target.result;
+    document.getElementById('photo-preview-wrap').style.display = 'block';
+    document.getElementById('photo-upload-label').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearPhoto() {
+  document.getElementById('s-photo').value = '';
+  document.getElementById('photo-preview').src = '';
+  document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.getElementById('photo-upload-label').style.display = 'flex';
+}
+
+function showPhotoPreview(src) {
+  if (!src) { clearPhoto(); return; }
+  document.getElementById('photo-preview').src = src;
+  document.getElementById('photo-preview-wrap').style.display = 'block';
+  document.getElementById('photo-upload-label').style.display = 'none';
+}
+
+function openAddStyle() { editingStyleId = null; clearStyleForm(); openModal('modal-add-style'); }
+
+function clearStyleForm() {
+  ['s-name','s-notes'].forEach(id => document.getElementById(id).value='');
+  ['s-occasion','s-direction','s-garment','s-fabric','s-price'].forEach(id => document.getElementById(id).value='');
+  styleGenderSelected = '';
+  ['sg-female','sg-male','sg-children'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  clearPhoto();
+}
+
+function selectStyleGender(g) {
+  styleGenderSelected = g === 'female' ? "Women's Wear" : g === 'male' ? "Men's Wear" : "Children's Wear";
+  ['sg-female','sg-male','sg-children'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  document.getElementById('sg-' + g).classList.add('selected');
+}
+
+function saveStyle() {
+  const name = document.getElementById('s-name').value.trim();
+  const occasion = document.getElementById('s-occasion').value;
+  const direction = document.getElementById('s-direction').value;
+  const garment = document.getElementById('s-garment').value;
+  const fabric = document.getElementById('s-fabric').value;
+  if (!name || !occasion || !styleGenderSelected || !direction || !garment || !fabric) {
+    showToast('Please fill in all required tag fields ⚠️'); return;
+  }
+  const fileInput = document.getElementById('s-photo');
+  const file = fileInput && fileInput.files && fileInput.files[0];
+  // Get existing photo when editing (preserve it if no new file chosen)
+  const existingPhoto = editingStyleId
+    ? (getCatalogue().find(s => s.id === editingStyleId) || {}).photo || null
+    : null;
+
+  function buildAndSave(photoData) {
+    const style = {
+      id: editingStyleId || Date.now().toString(),
+      name, occasion,
+      gender: styleGenderSelected,
+      styleDirection: direction,
+      garmentType: garment,
+      fabricFamily: fabric,
+      notes: document.getElementById('s-notes').value.trim(),
+      price: document.getElementById('s-price').value,
+      photo: photoData
+    };
+    const cat = getCatalogue();
+    if (editingStyleId) {
+      const idx = cat.findIndex(s => s.id === editingStyleId);
+      if (idx > -1) cat[idx] = style;
+    } else {
+      cat.push(style);
+    }
+    saveCatalogue(cat);
+    closeModal('modal-add-style');
+    renderCatalogue();
+    showToast(editingStyleId ? 'Style updated! ✨' : 'Style added to catalogue! ✨');
+  }
+
+  if (file) {
+    // Check size — localStorage has ~5MB limit per value
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Image too large. Please use an image under 2MB ⚠️'); return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => buildAndSave(e.target.result);
+    reader.onerror = () => { showToast('Could not read image. Saving without photo.'); buildAndSave(existingPhoto); };
+    reader.readAsDataURL(file);
+  } else {
+    buildAndSave(existingPhoto);
+  }
+}
+
+function editStyle(id) {
+  const cat = getCatalogue();
+  const s = cat.find(x => x.id === id);
+  if (!s) return;
+  editingStyleId = id;
+  document.getElementById('s-name').value = s.name;
+  document.getElementById('s-occasion').value = s.occasion;
+  document.getElementById('s-direction').value = s.styleDirection;
+  document.getElementById('s-garment').value = s.garmentType;
+  document.getElementById('s-fabric').value = s.fabricFamily;
+  document.getElementById('s-notes').value = s.notes || '';
+  document.getElementById('s-price').value = s.price || '';
+  styleGenderSelected = s.gender;
+  ['sg-female','sg-male','sg-children'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  if (s.gender === "Women's Wear") document.getElementById('sg-female').classList.add('selected');
+  else if (s.gender === "Men's Wear") document.getElementById('sg-male').classList.add('selected');
+  else document.getElementById('sg-children').classList.add('selected');
+  // Restore photo preview if available
+  if (s.photo) showPhotoPreview(s.photo);
+  else clearPhoto();
+  openModal('modal-add-style');
+}
+
+function deleteStyle(id) {
+  if (!confirm('Remove this style from your catalogue?')) return;
+  let cat = getCatalogue().filter(s => s.id !== id);
+  saveCatalogue(cat);
+  renderCatalogue();
+  showToast('Style removed.');
+}
+
+function renderCatalogue() {
+  const grid = document.getElementById('catalogue-grid');
+  const cat = getCatalogue();
+  if (!cat.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👗</div><div class="empty-title">Your catalogue is empty</div><div class="empty-desc">Add your first signature style to get started. Clients will be matched to your designs.</div></div>`;
+    return;
+  }
+  grid.innerHTML = cat.map(s => `
+    <div class="style-card">
+      <div class="style-card-img">
+        ${s.photo
+          ? `<img src="${s.photo}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover">`
+          : `<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)"><span style="font-size:36px">🪡</span><span style="font-size:11px">No photo</span></div>`
+        }
+      </div>
+      <div class="style-card-body">
+        <div class="style-card-name">${s.name}</div>
+        <div class="style-tags">
+          <span class="tag-pill">${s.occasion}</span>
+          <span class="tag-pill">${s.gender}</span>
+          <span class="tag-pill">${s.styleDirection}</span>
+          <span class="tag-pill">${s.fabricFamily}</span>
+        </div>
+        ${s.price ? `<div style="font-size:12px;color:var(--gold);margin-bottom:10px">${s.price}</div>` : ''}
+        <div class="style-card-actions">
+          <button class="btn-card" onclick="editStyle('${s.id}')">✏️ Edit</button>
+          <button class="btn-card" onclick="deleteStyle('${s.id}')">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// MEASUREMENT BOOK
+// ══════════════════════════════════════════════════════
+function getMeasurements() { return SS.get('measurements_' + (currentUser?.email||'demo')) || []; }
+function setMeasurements(d) { SS.set('measurements_' + (currentUser?.email||'demo'), d); }
+
+function selectGender(g) {
+  measGenderSelected = g;
+  document.getElementById('gbtn-female').classList.toggle('selected', g === 'female');
+  document.getElementById('gbtn-male').classList.toggle('selected', g === 'male');
+  document.getElementById('female-measurements').style.display = g === 'female' ? 'block' : 'none';
+  document.getElementById('male-measurements').style.display = g === 'male' ? 'block' : 'none';
+}
+
+function saveMeasurement() {
+  const name = document.getElementById('m-name').value.trim();
+  const phone = document.getElementById('m-phone').value.trim();
+  const occasion = document.getElementById('m-occasion').value;
+  if (!name) { showToast('Please enter client name'); return; }
+  if (!measGenderSelected) { showToast('Please select gender'); return; }
+  const m = {
+    id: Date.now().toString(), name, phone, occasion,
+    gender: measGenderSelected,
+    notes: document.getElementById('m-notes').value,
+    date: new Date().toLocaleDateString('en-GB'),
+    measurements: measGenderSelected === 'female' ? {
+      bust: document.getElementById('m-bust').value,
+      waist: document.getElementById('m-waist').value,
+      hips: document.getElementById('m-hips').value,
+      shoulder: document.getElementById('m-shoulder').value,
+      length: document.getElementById('m-length').value,
+      arm: document.getElementById('m-arm').value
+    } : {
+      chest: document.getElementById('m-chest').value,
+      waist: document.getElementById('m-waist-m').value,
+      seat: document.getElementById('m-seat').value,
+      shoulder: document.getElementById('m-shoulder-m').value,
+      trouser: document.getElementById('m-trouser').value,
+      neck: document.getElementById('m-neck').value
+    }
+  };
+  const all = getMeasurements();
+  all.unshift(m);
+  setMeasurements(all);
+  // Clear form
+  ['m-name','m-phone','m-notes','m-bust','m-waist','m-hips','m-shoulder','m-length','m-arm','m-chest','m-waist-m','m-seat','m-shoulder-m','m-trouser','m-neck'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('m-occasion').value = '';
+  measGenderSelected = '';
+  document.getElementById('gbtn-female').classList.remove('selected');
+  document.getElementById('gbtn-male').classList.remove('selected');
+  document.getElementById('female-measurements').style.display='none';
+  document.getElementById('male-measurements').style.display='none';
+  renderLedger();
+  updateMeasCount();
+  showToast(name + ' saved to measurement book! 📏');
+}
+
+function updateMeasCount() {
+  const count = getMeasurements().length;
+  document.getElementById('meas-count').textContent = count + ' saved';
+}
+
+function renderLedger() {
+  const list = document.getElementById('ledger-list');
+  const all = getMeasurements();
+  if (!all.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📖</div><div class="empty-title">No measurements yet</div><div class="empty-desc">Complete a client intake above to populate your ledger.</div></div>`;
+    return;
+  }
+  list.innerHTML = all.map(m => {
+    const meas = m.measurements;
+    const summary = m.gender === 'female'
+      ? `Bust ${meas.bust||'—'}" · Waist ${meas.waist||'—'}" · Hip ${meas.hips||'—'}"`
+      : `Chest ${meas.chest||'—'}" · Waist ${meas.waist||'—'}" · Shoulder ${meas.shoulder||'—'}"`;
+    return `
+    <div class="ledger-card" onclick="viewMeasurement('${m.id}')">
+      <div class="ledger-avatar">${m.gender === 'female' ? '👩' : '👨'}</div>
+      <div class="ledger-info">
+        <div class="ledger-name">${m.name}</div>
+        <div class="ledger-meta">${summary} · ${m.date}</div>
+        ${m.occasion ? `<div class="ledger-meta" style="margin-top:2px">${m.occasion}</div>` : ''}
+      </div>
+      <span class="ledger-badge ${m.gender === 'female' ? 'badge-female' : 'badge-male'}">${m.gender === 'female' ? '♀ Female' : '♂ Male'}</span>
+    </div>`;
+  }).join('');
+}
+
+function viewMeasurement(id) {
+  const m = getMeasurements().find(x => x.id === id);
+  if (!m) return;
+  const meas = m.measurements;
+  const rows = Object.entries(meas).map(([k,v]) => `<div class="result-row"><span class="result-row-label" style="text-transform:capitalize">${k}</span><span class="result-row-value">${v||'—'}"</span></div>`).join('');
+  document.getElementById('meas-detail-content').innerHTML = `
+    <div class="result-row"><span class="result-row-label">Name</span><span class="result-row-value">${m.name}</span></div>
+    <div class="result-row"><span class="result-row-label">Phone</span><span class="result-row-value">${m.phone||'—'}</span></div>
+    <div class="result-row"><span class="result-row-label">Gender</span><span class="result-row-value">${m.gender}</span></div>
+    <div class="result-row"><span class="result-row-label">Occasion</span><span class="result-row-value">${m.occasion||'—'}</span></div>
+    <div class="divider"></div>
+    ${rows}
+    ${m.notes ? `<div style="margin-top:12px;padding:12px;background:var(--bg3);border-radius:10px;font-size:13px;color:var(--muted2)">${m.notes}</div>` : ''}
+  `;
+  openModal('modal-view-meas');
+}
+
+function renderCustomers() {
+  const list = document.getElementById('customers-list');
+  const all = getMeasurements();
+  if (!all.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No customers yet</div><div class="empty-desc">Clients who complete the Style Discovery quiz or are added to the measurement book will appear here.</div></div>`;
+    return;
+  }
+  list.innerHTML = all.map(m => `
+    <div class="ledger-card">
+      <div class="ledger-avatar">${m.gender === 'female' ? '👩' : '👨'}</div>
+      <div class="ledger-info">
+        <div class="ledger-name">${m.name}</div>
+        <div class="ledger-meta">${m.phone||'No phone'} · Added ${m.date}</div>
+      </div>
+      <span class="ledger-badge ${m.gender === 'female' ? 'badge-female' : 'badge-male'}">${m.gender === 'female' ? '♀' : '♂'}</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// UNIFIED CARD SELECTION (fixes apostrophe/quote bug)
+// ══════════════════════════════════════════════════════
+function selectAnswerFromCard(el) {
+  const field = el.dataset.field;
+  const value = el.dataset.value;
+  if (!field || !value) return;
+  selectAnswer(field, value, el);
+}
+
+function startQuiz() {
+  document.getElementById('quiz-welcome').style.display = 'none';
+  document.getElementById('quiz-wrapper').style.display = 'flex';
+  document.getElementById('quiz-wrapper').style.flexDirection = 'column';
+  currentQuizStep = 1;
+  updateQuizProgress(1);
+}
+
+function resetQuiz() {
+  quizAnswers = { occasion:'', gender:'', styleDirection:'', garmentType:'', fabricFamily:'' };
+  currentQuizStep = 1;
+  document.getElementById('quiz-welcome').style.display = 'flex';
+  document.getElementById('quiz-welcome').style.flexDirection = 'column';
+  document.getElementById('quiz-wrapper').style.display = 'none';
+  // Reset all cards
+  document.querySelectorAll('.answer-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.swatch-card').forEach(c => c.classList.remove('selected'));
+  ['next-q1','next-q2','next-q3','next-q4','next-q5'].forEach(id => { document.getElementById(id).disabled = true; });
+  // Show Q1
+  document.querySelectorAll('.quiz-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz-q1').classList.add('active');
+}
+
+function selectAnswer(field, value, el) {
+  quizAnswers[field] = value;
+  // Deselect siblings
+  const parent = el.parentElement;
+  parent.querySelectorAll('.answer-card,.swatch-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  // Enable next button
+  const stepMap = { occasion:1, gender:2, styleDirection:3, garmentType:4, fabricFamily:5 };
+  const step = stepMap[field];
+  document.getElementById('next-q' + step).disabled = false;
+}
+
+function updateQuizProgress(step) {
+  document.getElementById('step-label').textContent = 'Step ' + step + ' of 5';
+  document.getElementById('progress-fill').style.width = (step * 20) + '%';
+}
+
+function nextQuiz(step) {
+  document.getElementById('quiz-q' + step).classList.remove('active');
+  if (step < 5) {
+    document.getElementById('quiz-q' + (step+1)).classList.add('active');
+    currentQuizStep = step + 1;
+    updateQuizProgress(currentQuizStep);
+  } else {
+    // Go to loading
+    showPage('loading');
+    runLoadingAnimation();
+  }
+}
+
+function quizBack() {
+  if (currentQuizStep === 1) {
+    document.getElementById('quiz-welcome').style.display = 'flex';
+    document.getElementById('quiz-welcome').style.flexDirection = 'column';
+    document.getElementById('quiz-wrapper').style.display = 'none';
+    return;
+  }
+  document.getElementById('quiz-q' + currentQuizStep).classList.remove('active');
+  currentQuizStep--;
+  document.getElementById('quiz-q' + currentQuizStep).classList.add('active');
+  updateQuizProgress(currentQuizStep);
+}
+
+// ══════════════════════════════════════════════════════
+// LOADING ANIMATION
+// ══════════════════════════════════════════════════════
+function runLoadingAnimation() {
+  const texts = ['Reading your style profile...','Searching your designer\'s catalogue...','Matching looks to your preferences...','Preparing your personalised lookbook...'];
+  const bar = document.getElementById('loading-bar');
+  const textEl = document.getElementById('loading-text');
+  let pct = 0;
+  let textIdx = 0;
+  bar.style.width = '0%';
+  const interval = setInterval(() => {
+    pct += 4;
+    bar.style.width = Math.min(pct, 100) + '%';
+    if (pct % 25 === 0 && textIdx < texts.length) {
+      textEl.style.opacity = 0;
+      setTimeout(() => { textEl.textContent = texts[textIdx++]; textEl.style.opacity = 1; }, 300);
+    }
+    if (pct >= 100) {
+      clearInterval(interval);
+      setTimeout(() => showResult(), 600);
+    }
+  }, 60);
+}
+
+// ══════════════════════════════════════════════════════
+// RECOMMENDATION ENGINE
+// ══════════════════════════════════════════════════════
+function scoreItem(item, answers) {
+  let score = 0;
+  if (item.occasion === answers.occasion) score += 2;
+  if (item.gender === answers.gender) score += 2;
+  if (item.styleDirection === answers.styleDirection) score += 2;
+  if (item.garmentType === answers.garmentType) score += 1;
+  if (item.fabricFamily === answers.fabricFamily) score += 1;
+  return score;
+}
+
+function getMatches(answers) {
+  const cat = getCatalogue();
+  return cat
+    .map(item => ({ ...item, score: scoreItem(item, answers) }))
+    .filter(item => item.score > 0)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 3);
+}
+
+function getMatchedTags(item, answers) {
+  const tags = [];
+  if (item.occasion === answers.occasion) tags.push(answers.occasion);
+  if (item.gender === answers.gender) tags.push(answers.gender);
+  if (item.styleDirection === answers.styleDirection) tags.push(answers.styleDirection);
+  if (item.garmentType === answers.garmentType) tags.push(answers.garmentType);
+  if (item.fabricFamily === answers.fabricFamily) tags.push(answers.fabricFamily);
+  return tags;
+}
+
+// Fallback hardcoded recommendations when catalogue is empty
+function getFallbackRecos(answers) {
+  const map = {
+    'Traditional & Ceremonial': [
+      { name: 'Structured Kente Wrap Dress', meas: 'Chest 36" · Waist 28" · Hip 40"' },
+      { name: 'Full Ankara Flare Skirt Set', meas: 'Waist 28" · Length 44"' }
+    ],
+    'Contemporary African': [
+      { name: 'Clean-Cut Linen Kaftan', meas: 'Shoulder 15" · Length 54"' },
+      { name: 'Structured Monochrome Co-ord', meas: 'Chest 36" · Waist 28"' }
+    ],
+    'Afro-Modern Fusion': [
+      { name: 'Bold Print Asymmetric Dress', meas: 'Bust 38" · Hip 42" · Length 48"' },
+      { name: 'Vibrant Two-Piece Set', meas: 'Waist 28" · Hip 40"' }
+    ],
+    'Western Formal': [
+      { name: 'Tailored Pencil Dress', meas: 'Chest 36" · Waist 27" · Hip 38"' },
+      { name: 'Classic Structured Blazer Set', meas: 'Shoulder 15" · Chest 36"' }
+    ],
+    'Casual & Streetwear': [
+      { name: 'Relaxed Ankara Midi Dress', meas: 'Bust 36" · Waist 30" · Hip 42"' },
+      { name: 'Casual Co-ord Set', meas: 'Waist 28" · Hip 40"' }
+    ]
+  };
+  return (map[answers.styleDirection] || map['Contemporary African']).map(r => ({ ...r, isFallback: true }));
+}
+
+function showResult() {
+  // Fill answer rows
+  document.getElementById('res-occasion').textContent = quizAnswers.occasion || '—';
+  document.getElementById('res-gender').textContent = quizAnswers.gender || '—';
+  document.getElementById('res-style').textContent = quizAnswers.styleDirection || '—';
+  document.getElementById('res-garment').textContent = quizAnswers.garmentType || '—';
+  document.getElementById('res-fabric').textContent = quizAnswers.fabricFamily || '—';
+  document.getElementById('result-prepared').textContent = 'Prepared by ' + (currentUser?.studio || 'your designer');
+
+  const matches = getMatches(quizAnswers);
+  const recoList = document.getElementById('reco-list');
+
+  if (matches.length > 0) {
+    recoList.innerHTML = matches.map(item => {
+      const tags = getMatchedTags(item, quizAnswers);
+      return `
+        <div class="reco-card">
+          <div class="reco-bullet">✦</div>
+          <div>
+            <div class="reco-name">${item.name}</div>
+            ${item.notes ? `<div class="reco-meas">${item.notes}</div>` : ''}
+            ${item.price ? `<div class="reco-meas" style="color:var(--gold);margin-top:3px">${item.price}</div>` : ''}
+            <div class="reco-tags">${tags.map(t => `<span class="reco-tag-match">✓ ${t}</span>`).join('')}</div>
+          </div>
+        </div>`;
+    }).join('');
+  } else {
+    // Fallback
+    const fallback = getFallbackRecos(quizAnswers);
+    recoList.innerHTML = `
+      <div class="fallback-state">
+        <div class="fallback-icon">📋</div>
+        <div class="fallback-title">Personalised recommendations from your designer</div>
+        <div class="fallback-desc">Based on your style profile, here are suggested looks. Share via WhatsApp for tailored options from the catalogue.</div>
+      </div>` +
+      fallback.map(r => `
+        <div class="reco-card">
+          <div class="reco-bullet">✦</div>
+          <div>
+            <div class="reco-name">${r.name}</div>
+            <div class="reco-meas">${r.meas}</div>
+          </div>
+        </div>`).join('');
+  }
+
+  showPage('result');
+}
+
+function sendWhatsApp() {
+  const a = quizAnswers;
+  const studio = currentUser?.studio || 'your studio';
+  const msg = encodeURIComponent(
+    `Hi! I just completed my StyleSwift Style Discovery with ${studio}. Here is my profile:\n\n` +
+    `👗 Occasion: ${a.occasion}\n` +
+    `👤 For: ${a.gender}\n` +
+    `✨ Style: ${a.styleDirection}\n` +
+    `👚 Looking for: ${a.garmentType}\n` +
+    `🧵 Fabric preference: ${a.fabricFamily}\n\n` +
+    `Looking forward to our consultation!`
+  );
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+// ══════════════════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════════════
+// DEMO DATA SEED
+// ══════════════════════════════════════════════════════
+function seedDemoData() {
+  const key = 'catalogue_' + (currentUser?.email||'demo');
+  if (SS.get(key)?.length) return;
+  const demos = [
+    { id:'d1', name:'Royal Kente Bridal Gown', occasion:'Wedding & Bridal', gender:"Women's Wear", styleDirection:'Traditional & Ceremonial', garmentType:'Dress / Gown', fabricFamily:'Kente', notes:'Structured floor-length gown using hand-woven Kente cloth. Perfect for traditional wedding ceremonies.', price:'GHS 2,000 – 5,000', photo:null },
+    { id:'d2', name:'Contemporary Ankara Power Set', occasion:'Birthday & Party', gender:"Women's Wear", styleDirection:'Contemporary African', garmentType:'Full Outfit / Complete Set', fabricFamily:'Ankara / Wax Print', notes:'Bold two-piece set with structured blazer and wide-leg trousers in vibrant Ankara print.', price:'GHS 1,000 – 2,000', photo:null },
+    { id:'d3', name:'Agbada Senator Formal Set', occasion:'Festival & Durbar', gender:"Men's Wear", styleDirection:'Traditional & Ceremonial', garmentType:'Traditional Attire (Kaba, Kaftan, Agbada)', fabricFamily:'Plain / Solid Fabric', notes:'Three-piece Agbada set in premium imported fabric. Tailored for executives and heads of family.', price:'GHS 2,000 – 5,000', photo:null }
+  ];
+  SS.set(key, demos);
+}
+
+// ══════════════════════════════════════════════════════
+// MOBILE SIDEBAR
+// ══════════════════════════════════════════════════════
+function openMobileSidebar() {
+  document.getElementById('main-sidebar').classList.add('mobile-open');
+  document.getElementById('mobile-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileSidebar() {
+  document.getElementById('main-sidebar').classList.remove('mobile-open');
+  document.getElementById('mobile-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══════════════════════════════════════════════════════
+// ORDERS
+// ══════════════════════════════════════════════════════
+function getOrders() { return SS.get('orders_' + (currentUser?.email||'demo')) || []; }
+function saveOrders(d) { SS.set('orders_' + (currentUser?.email||'demo'), d); }
+
+let editingOrderId = null;
+let txTypeSelected = 'income';
+let activeOrderFilter = 'all';
+
+function openAddOrder() {
+  editingOrderId = null;
+  ['o-client','o-garment','o-amount','o-notes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('o-status').value = 'pending';
+  document.getElementById('o-due').value = '';
+  openModal('modal-add-order');
+}
+
+function saveOrder() {
+  const client = document.getElementById('o-client').value.trim();
+  const garment = document.getElementById('o-garment').value.trim();
+  if (!client || !garment) { showToast('Please fill in client name and garment ⚠️'); return; }
+  const order = {
+    id: editingOrderId || Date.now().toString(),
+    client, garment,
+    due: document.getElementById('o-due').value,
+    amount: document.getElementById('o-amount').value,
+    status: document.getElementById('o-status').value,
+    notes: document.getElementById('o-notes').value.trim(),
+    date: new Date().toLocaleDateString('en-GB')
+  };
+  const all = getOrders();
+  if (editingOrderId) {
+    const idx = all.findIndex(o => o.id === editingOrderId);
+    if (idx > -1) all[idx] = order;
+  } else {
+    all.unshift(order);
+  }
+  saveOrders(all);
+  closeModal('modal-add-order');
+  renderOrders(activeOrderFilter);
+  showToast('Order saved! 📦');
+}
+
+function updateOrderStatus(id, status) {
+  const all = getOrders();
+  const idx = all.findIndex(o => o.id === id);
+  if (idx > -1) { all[idx].status = status; saveOrders(all); renderOrders(activeOrderFilter); showToast('Status updated!'); }
+}
+
+function deleteOrder(id) {
+  if (!confirm('Delete this order?')) return;
+  saveOrders(getOrders().filter(o => o.id !== id));
+  renderOrders(activeOrderFilter);
+  closeModal('modal-order-detail');
+  showToast('Order deleted.');
+}
+
+function filterOrders(filter, btn) {
+  activeOrderFilter = filter;
+  document.querySelectorAll('.order-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders(filter);
+}
+
+const statusLabels = { pending:'Pending', inprogress:'In Progress', ready:'Ready', delivered:'Delivered' };
+const statusColors = { pending:'status-pending', inprogress:'status-inprogress', ready:'status-ready', delivered:'status-delivered' };
+const statusIcons  = { pending:'🟡', inprogress:'🔵', ready:'🟢', delivered:'✅' };
+
+function renderOrders(filter = 'all') {
+  const list = document.getElementById('orders-list');
+  let all = getOrders();
+  if (filter !== 'all') all = all.filter(o => o.status === filter);
+  if (!all.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders ${filter !== 'all' ? 'with status "'+statusLabels[filter]+'"' : 'yet'}</div><div class="empty-desc">Add your first client order to start tracking.</div></div>`;
+    return;
+  }
+  list.innerHTML = all.map(o => `
+    <div class="order-card" onclick="viewOrder('${o.id}')">
+      <div class="order-icon">${statusIcons[o.status] || '📦'}</div>
+      <div class="order-info">
+        <div class="order-client">${o.client}</div>
+        <div class="order-detail">${o.garment}${o.due ? ' · Due ' + o.due : ''}</div>
+      </div>
+      ${o.amount ? `<div class="order-amount">GHS ${o.amount}</div>` : ''}
+      <span class="order-status ${statusColors[o.status] || ''}">${statusLabels[o.status] || o.status}</span>
+    </div>
+  `).join('');
+}
+
+function viewOrder(id) {
+  const o = getOrders().find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('order-detail-content').innerHTML = `
+    <div class="result-row"><span class="result-row-label">Client</span><span class="result-row-value">${o.client}</span></div>
+    <div class="result-row"><span class="result-row-label">Garment</span><span class="result-row-value">${o.garment}</span></div>
+    <div class="result-row"><span class="result-row-label">Amount</span><span class="result-row-value" style="color:var(--gold)">${o.amount ? 'GHS ' + o.amount : '—'}</span></div>
+    <div class="result-row"><span class="result-row-label">Due Date</span><span class="result-row-value">${o.due || '—'}</span></div>
+    <div class="result-row"><span class="result-row-label">Added</span><span class="result-row-value">${o.date}</span></div>
+    ${o.notes ? `<div style="margin:14px 0;padding:12px;background:var(--bg3);border-radius:10px;font-size:13px;color:var(--muted2)">${o.notes}</div>` : ''}
+    <div style="margin-top:16px">
+      <div class="form-label" style="margin-bottom:10px">Update Status</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${Object.entries(statusLabels).map(([k,v]) => `<button onclick="updateOrderStatus('${o.id}','${k}')" style="padding:10px;border-radius:8px;border:1.5px solid var(--border);background:${o.status===k?'rgba(240,180,41,0.1)':'transparent'};color:${o.status===k?'var(--gold)':'var(--muted2)'};font-size:13px;font-weight:600;cursor:pointer">${statusIcons[k]} ${v}</button>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button onclick="sendOrderWhatsApp('${o.id}')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-weight:600;font-size:13px;cursor:pointer">💬 WhatsApp Client</button>
+      <button onclick="deleteOrder('${o.id}')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(248,113,113,0.4);background:transparent;color:var(--error);font-weight:600;font-size:13px;cursor:pointer">🗑️ Delete</button>
+    </div>
+  `;
+  openModal('modal-order-detail');
+}
+
+function sendOrderWhatsApp(id) {
+  const o = getOrders().find(x => x.id === id);
+  if (!o) return;
+  const msg = encodeURIComponent(`Hi ${o.client}! This is a message from ${currentUser?.studio || 'your designer'} regarding your order:\n\n👗 Item: ${o.garment}\n📅 Due: ${o.due || 'TBD'}\n💰 Amount: ${o.amount ? 'GHS ' + o.amount : 'TBD'}\n📌 Status: ${statusLabels[o.status]}\n\nPlease feel free to reach out if you have any questions.`);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+// ══════════════════════════════════════════════════════
+// ANALYTICS
+// ══════════════════════════════════════════════════════
+function renderAnalytics() {
+  const cat = getCatalogue();
+  const meas = getMeasurements();
+  const orders = getOrders();
+  const totalRevenue = orders.filter(o => o.status === 'delivered' && o.amount).reduce((s,o) => s + parseFloat(o.amount||0), 0);
+
+  document.getElementById('analytics-stats').innerHTML = `
+    <div class="analytics-card"><div class="analytics-label">Catalogue Styles</div><div class="analytics-value">${cat.length}</div><div class="analytics-sub">Designs tagged and ready</div></div>
+    <div class="analytics-card"><div class="analytics-label">Client Profiles</div><div class="analytics-value">${meas.length}</div><div class="analytics-sub">Measurements saved</div></div>
+    <div class="analytics-card"><div class="analytics-label">Total Orders</div><div class="analytics-value">${orders.length}</div><div class="analytics-sub">${orders.filter(o=>o.status==='pending').length} pending</div></div>
+    <div class="analytics-card"><div class="analytics-label">Revenue Earned</div><div class="analytics-value" style="font-size:22px">GHS ${totalRevenue.toLocaleString()}</div><div class="analytics-sub">From delivered orders</div></div>
+  `;
+
+  // Tag distribution bars
+  const occasionCount = {};
+  cat.forEach(s => { occasionCount[s.occasion] = (occasionCount[s.occasion]||0)+1; });
+  const max = Math.max(...Object.values(occasionCount), 1);
+  document.getElementById('analytics-bars').innerHTML = `
+    <div class="analytics-bar-wrap">
+      <div style="font-family:var(--font-d);font-size:14px;font-weight:700;margin-bottom:14px">Catalogue by Occasion</div>
+      ${Object.entries(occasionCount).length ? Object.entries(occasionCount).map(([k,v]) => `
+        <div class="analytics-bar-label"><span>${k}</span><span style="color:var(--gold);font-weight:600">${v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
+      `).join('') : '<div style="color:var(--muted);font-size:13px;padding:20px 0">Add styles to your catalogue to see distribution.</div>'}
+    </div>
+    <div class="analytics-bar-wrap">
+      <div style="font-family:var(--font-d);font-size:14px;font-weight:700;margin-bottom:14px">Orders by Status</div>
+      ${['pending','inprogress','ready','delivered'].map(s => {
+        const count = orders.filter(o => o.status === s).length;
+        return `
+          <div class="analytics-bar-label"><span>${statusLabels[s]}</span><span style="color:var(--gold);font-weight:600">${count}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${orders.length ? (count/orders.length*100).toFixed(0) : 0}%"></div></div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════
+// FINANCE
+// ══════════════════════════════════════════════════════
+function getTransactions() { return SS.get('transactions_' + (currentUser?.email||'demo')) || []; }
+function saveTransactions(d) { SS.set('transactions_' + (currentUser?.email||'demo'), d); }
+
+function selectTxType(type) {
+  txTypeSelected = type;
+  document.getElementById('tx-income-btn').classList.toggle('selected', type==='income');
+  document.getElementById('tx-expense-btn').classList.toggle('selected', type==='expense');
+}
+
+function openAddTransaction() {
+  txTypeSelected = 'income';
+  document.getElementById('tx-income-btn').classList.add('selected');
+  document.getElementById('tx-expense-btn').classList.remove('selected');
+  ['tx-desc','tx-amount'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
+  openModal('modal-add-transaction');
+}
+
+function saveTransaction() {
+  const desc = document.getElementById('tx-desc').value.trim();
+  const amount = parseFloat(document.getElementById('tx-amount').value);
+  if (!desc || !amount) { showToast('Please fill in description and amount ⚠️'); return; }
+  const tx = {
+    id: Date.now().toString(),
+    type: txTypeSelected,
+    desc, amount,
+    date: document.getElementById('tx-date').value || new Date().toLocaleDateString('en-GB')
+  };
+  const all = getTransactions();
+  all.unshift(tx);
+  saveTransactions(all);
+  closeModal('modal-add-transaction');
+  renderFinance();
+  showToast('Transaction saved! 💰');
+}
+
+function renderFinance() {
+  const txs = getTransactions();
+  const income  = txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount, 0);
+  const expense = txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount, 0);
+  const net = income - expense;
+  document.getElementById('finance-summary').innerHTML = `
+    <div class="finance-card"><div class="finance-icon">📈</div><div class="finance-label">Total Income</div><div class="finance-value green">GHS ${income.toLocaleString()}</div></div>
+    <div class="finance-card"><div class="finance-icon">📉</div><div class="finance-label">Total Expenses</div><div class="finance-value" style="color:var(--error)">GHS ${expense.toLocaleString()}</div></div>
+    <div class="finance-card"><div class="finance-icon">💰</div><div class="finance-label">Net Profit</div><div class="finance-value ${net>=0?'green':''}">GHS ${net.toLocaleString()}</div></div>
+    <div class="finance-card"><div class="finance-icon">🎫</div><div class="finance-label">Transactions</div><div class="finance-value gold">${txs.length}</div></div>
+  `;
+  document.getElementById('finance-ledger').innerHTML = txs.length ? txs.map(t => `
+    <div class="transaction-row">
+      <div class="tx-dot ${t.type}"></div>
+      <div class="tx-info"><div class="tx-name">${t.desc}</div><div class="tx-date">${t.date}</div></div>
+      <div class="tx-amount ${t.type}">${t.type==='income'?'+':'-'}GHS ${t.amount.toLocaleString()}</div>
+    </div>
+  `).join('') : `<div style="color:var(--muted);font-size:14px;padding:20px 0;text-align:center">No transactions recorded yet.</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// SHARE MODAL
+// ══════════════════════════════════════════════════════
+function openShareModal() {
+  const url = window.location.href.split('?')[0] + '?view=customer&designer=' + encodeURIComponent(currentUser?.studio||'Your Studio');
+  document.getElementById('share-url-display').textContent = url;
+  openModal('modal-share');
+}
+
+function copyShareLink() {
+  const url = document.getElementById('share-url-display').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied! 📋')).catch(() => showToast('Copy: ' + url));
+}
+
+function shareOnWhatsApp() {
+  const url = document.getElementById('share-url-display').textContent;
+  const msg = encodeURIComponent(`Hi! I'd like to invite you to discover your personal style with ${currentUser?.studio || 'our studio'}. It takes just 90 seconds and no download is needed.\n\nClick here: ${url}`);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+// ══════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════
+function openSettingsModal() {
+  if (!currentUser) return;
+  document.getElementById('set-studio').textContent = currentUser.studio;
+  document.getElementById('set-name').textContent = currentUser.name;
+  document.getElementById('set-email').textContent = currentUser.email;
+  openModal('modal-settings');
+}
+
+function updateStudioName() {
+  const newName = document.getElementById('set-new-studio').value.trim();
+  if (!newName) { showToast('Please enter a new studio name'); return; }
+  const users = SS.get('users') || {};
+  if (users[currentUser.email]) {
+    users[currentUser.email].studio = newName;
+    SS.set('users', users);
+    currentUser.studio = newName;
+    SS.set('user', currentUser);
+    document.getElementById('set-studio').textContent = newName;
+    document.getElementById('topbar-name').textContent = 'Welcome, ' + newName;
+    document.getElementById('set-new-studio').value = '';
+    showToast('Studio name updated! ✨');
+  }
+}
+
+function confirmClearData() {
+  if (confirm('This will permanently delete all your catalogue styles, measurements, orders, and transactions. This cannot be undone.\n\nAre you sure?')) {
+    const email = currentUser.email;
+    ['catalogue_','measurements_','orders_','transactions_'].forEach(k => SS.remove(k + email));
+    closeModal('modal-settings');
+    initDashboard();
+    showToast('All studio data cleared.');
+  }
+}
+
+// Override copyLink to use share modal
+function copyLink() { openShareModal(); }
+
+// switchTab and initDashboard are fully defined above — no overrides needed.
+
+// ══════════════════════════════════════════════════════
+// SEED DEMO ORDERS & TRANSACTIONS
+// ══════════════════════════════════════════════════════
+function seedDemoOrders() {
+  const key = 'orders_' + (currentUser?.email||'demo');
+  if (SS.get(key)?.length) return;
+  SS.set(key, [
+    { id:'o1', client:'Ama Mensah', garment:'Kente Bridal Gown', due:'2026-08-15', amount:'2500', status:'inprogress', notes:'Client wants gold embroidery on sleeves', date:'15/07/2026' },
+    { id:'o2', client:'Kwame Asante', garment:'Senator Agbada Set', due:'2026-08-01', amount:'1800', status:'ready', notes:'Three-piece set, deep navy blue', date:'10/07/2026' }
+  ]);
+  const tkey = 'transactions_' + (currentUser?.email||'demo');
+  if (SS.get(tkey)?.length) return;
+  SS.set(tkey, [
+    { id:'t1', type:'income', desc:'Deposit — Kente Bridal Gown (Ama)', amount:1000, date:'15/07/2026' },
+    { id:'t2', type:'income', desc:'Full payment — Ankara Set (Abena)', amount:850, date:'10/07/2026' },
+    { id:'t3', type:'expense', desc:'Fabric purchase — Kente cloth', amount:400, date:'12/07/2026' }
+  ]);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT ON LOAD
+// ══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('view') === 'customer') {
+    const designer = params.get('designer') || 'Your Designer';
+    document.getElementById('welcome-studio').textContent = decodeURIComponent(designer);
+    showPage('customer');
+    return;
+  }
+  if (currentUser) {
+    initDashboard();
+    showPage('dashboard');
+  } else {
+    showPage('landing');
+  }
+});
+
+// initDashboard is fully defined above — no override needed.
+</script>
+</body>
+</html>
